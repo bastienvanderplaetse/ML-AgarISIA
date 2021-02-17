@@ -23,6 +23,6 @@ public class VerticalMovementStrategy : IMovementStrategy
 
     public void OnCollisionWithBoundary()
     {
-        movement = (movement == Vector3.down) ? Vector3.up : Vector3.down;
+        movement = (movement == Vector3.down) ? Vector3.down : Vector3.down;
     }
 }

@@ -10,6 +10,8 @@ public abstract class Eatable : MonoBehaviour
 
     public float initialMass;
 
+    public string ParentName { get; set; }
+
     private void Start()
     {
         Mass = initialMass;

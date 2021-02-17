@@ -13,7 +13,6 @@ public class PlayerInteractions : MonoBehaviour
             Eatable eatable = collision.gameObject.GetComponent<Eatable>();
             if (eatable.CanBeEatenBy(player))
             {
-                Debug.Log("EAT");
                 player.AddMass(eatable.Mass);
                 eatable.Eaten();
             }

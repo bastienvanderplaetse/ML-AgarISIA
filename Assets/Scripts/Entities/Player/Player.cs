@@ -13,17 +13,18 @@ public class Player : Eatable
     private void Awake()
     {
         Mass = initialMass;
-        StartCoroutine(Spawn(0, true));
+        Spawn(0, true);
+        Debug.Log("AWAKE");
     }
 
     private void Start()
     {
         StartCoroutine(MassDecrease());
-        Debug.Log("Initial mass" + initialMass + ", " + Mass);
     }
 
     public override void Eaten()
     {
+        Debug.Log("I'm eaten !!!");
         Mass = initialMass;
         transform.parent.transform.position = new Vector2(10000, 10000);
         StartCoroutine(Spawn(INTERVAL_RESPAWN, false));
@@ -32,6 +33,7 @@ public class Player : Eatable
     private IEnumerator Spawn(int interval, bool infiniteTry)
     {
         yield return new WaitForSeconds(interval);
+        Debug.Log("Spawn");
         (Vector3, bool) result;
         if (infiniteTry)
         {
@@ -48,7 +50,7 @@ public class Player : Eatable
 
     public override bool CanBeEatenBy(Eatable eater)
     {
-        return OverlapForEating(eater);
+        return OverlapForEating(eater) && eater.ParentName != this.ParentName;
     }
 
     public void AddMass(float mass)
@@ -77,5 +79,29 @@ public class Player : Eatable
                 AddMass(-Mass * DECREASE_RATE);
             }
         }
+    }
+
+    public void SpeedUp(Vector3 direction, float bonusSpeed, Transform _parent)
+    {
+        //Rigidbody2D rb2d = new Rigidbody2D();
+        Debug.Log("SPEED UP");
+        gameObject.AddComponent<Rigidbody2D>();
+        gameObject.GetComponent<Rigidbody2D>().velocity = direction.normalized * bonusSpeed;
+        //SpeedUpStop(_parent);
+        StartCoroutine(SpeedUpStop(_parent));
+        //yield return new WaitForSeconds(1);
+        //Destroy(gameObject.GetComponent<Rigidbody2D>());
+        //transform.parent = _parent;
+        //Debug.Log("END");
+        //Debug.Log("END");
+    }
+
+    private IEnumerator SpeedUpStop(Transform _parent)
+    {
+        Debug.Log("TEST STOP");
+        yield return new WaitForSeconds(1);
+        Destroy(gameObject.GetComponent<Rigidbody2D>());
+        transform.parent = _parent;
+        Debug.Log("END");
     }
 }
