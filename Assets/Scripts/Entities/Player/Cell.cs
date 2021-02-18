@@ -14,6 +14,7 @@ public class Cell : Eatable
     public Transform target;
 
     private Rigidbody2D rb2d;
+    //private CellManager cellManager;
 
     public string PlayerName { get; set; }
 
@@ -23,6 +24,7 @@ public class Cell : Eatable
         //Debug.Log("Cell Awake");
         rb2d = GetComponent<Rigidbody2D>();
         rb2d.velocity = Vector3.zero;
+        //cellManager = transform.parent.GetComponent<CellManager>();
         target = transform.parent.GetComponent<CellManager>().target;
         GetComponent<SpriteRenderer>().color = transform.parent.GetComponent<CellManager>().color;
     }
@@ -81,7 +83,7 @@ public class Cell : Eatable
         {
             Mass += mass;
         }
-        Debug.Log(ParentName + " mass " + mass + " / MASS " + Mass);
+        //Debug.Log(ParentName + " mass " + mass + " / MASS " + Mass);
         float radius = Radius();
         transform.localScale = new Vector3(radius, radius, 0);
     }

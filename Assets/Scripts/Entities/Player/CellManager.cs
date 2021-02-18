@@ -14,6 +14,7 @@ public class CellManager : MonoBehaviour
     private Cell initCell;
 
     private bool spawning;
+    private float initialMass;
 
     private void Awake()
     {
@@ -27,6 +28,7 @@ public class CellManager : MonoBehaviour
     private void Start()
     {
         spawning = false;
+        initialMass = -1f;
         //transform.GetChild(0).GetComponent<SpriteRenderer>().color = color;
         //transform.GetChild(0).GetC
     }
@@ -42,6 +44,11 @@ public class CellManager : MonoBehaviour
             spawning = true;
             StartCoroutine(Spawn(INTERVAL_RESPAWN, false));
         }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            Split();
+        }
     }
 
     private IEnumerator Spawn(int interval, bool infiniteTry)
@@ -50,6 +57,10 @@ public class CellManager : MonoBehaviour
         yield return new WaitForSeconds(interval);
         (Vector3, bool) result;
         GameObject cell = Instantiate(cellPrefab, transform);
+        if (initialMass < 0)
+        {
+            initialMass = cell.GetComponent<Cell>().initialMass;
+        }
         //cell.GetComponent<Cell>().target = target;
         if (infiniteTry)
         {
@@ -63,5 +74,29 @@ public class CellManager : MonoBehaviour
         //cell.transform.position = result.Item1;
         cell.transform.position = new Vector3(0, result.Item1.y, 0);
         spawning = false;
+    }
+
+    private void Split()
+    {
+        if (CanSplit())
+        {
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                
+            }
+        }
+    }
+
+    private bool CanSplit()
+    {
+        float totalMass = 0f;
+
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            totalMass += transform.GetChild(i).GetComponent<Cell>().Mass;
+        }
+
+        return totalMass > 2 * initialMass && transform.childCount < 16;
+        
     }
 }
