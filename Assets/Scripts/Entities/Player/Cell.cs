@@ -7,9 +7,12 @@ public class Cell : Eatable
     public static float MASS_MAX = 30000;
     private static int INTERVAL_DECREASE = 1;
     private static float DECREASE_RATE = 0.2f;
+    private static float SPEEDUP_TIME = 1f;
+
     private float initMassLog;
 
     public float speed;
+    private bool speedup;
 
     public Transform target;
 
@@ -36,6 +39,7 @@ public class Cell : Eatable
         initMassLog = Mathf.Log(initialMass);
         ParentName = transform.parent.parent.name;
         StartCoroutine(MassDecrease());
+        speedup = false;
     }
 
     private void FixedUpdate()
@@ -51,7 +55,13 @@ public class Cell : Eatable
 
     private float SpeedCoefficient()
     {
-        return speed / (Mathf.Log(Mass) - initMassLog + 1);
+        float speedCoefficient = speed / (Mathf.Log(Mass) - initMassLog + 1);
+        if (speedup)
+        {
+            speedCoefficient = 1.5f * speedCoefficient;
+        }
+
+        return speedCoefficient;
     }
 
     //private void OnTriggerStay2D(Collider2D collision)
@@ -108,5 +118,17 @@ public class Cell : Eatable
                 AddMass(-Mass * DECREASE_RATE);
             }
         }
+    }
+
+    public void SpeedUp()
+    {
+        speedup = true;
+        StartCoroutine(StopSpeedUp());
+    }
+
+    private IEnumerator StopSpeedUp()
+    {
+        yield return new WaitForSeconds(SPEEDUP_TIME);
+        speedup = false;
     }
 }
