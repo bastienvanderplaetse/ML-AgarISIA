@@ -18,6 +18,7 @@ public class CellManager : MonoBehaviour
 
     private bool spawning;
     private float initialMass;
+    public float InitialRadius { get; private set; }
 
     private void Awake()
     {
@@ -63,6 +64,7 @@ public class CellManager : MonoBehaviour
         if (initialMass < 0)
         {
             initialMass = cell.GetComponent<Cell>().initialMass;
+            InitialRadius = cell.transform.localScale.x / 2;
         }
         //cell.GetComponent<Cell>().target = target;
         if (infiniteTry)
@@ -144,6 +146,8 @@ public class CellManager : MonoBehaviour
     {
         cell.AddMass(-cell.Mass / 2);
         Transform clone = Instantiate(cell.transform, transform);
+        clone.GetComponent<Cell>().Mass = cell.Mass;
+        Debug.Log(cell.Mass + " / " + clone.GetComponent<Cell>().Mass);
         cell.SpeedUp();
     }
 

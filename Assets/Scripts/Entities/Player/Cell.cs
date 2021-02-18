@@ -6,7 +6,7 @@ public class Cell : Eatable
 {
     public static float MASS_MAX = 30000;
     private static int INTERVAL_DECREASE = 1;
-    private static float DECREASE_RATE = 0.2f;
+    private static float DECREASE_RATE = 0.002f;
     private static float SPEEDUP_TIME = 1f;
 
     private float initMassLog;
