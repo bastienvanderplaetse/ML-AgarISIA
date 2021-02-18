@@ -9,20 +9,27 @@ public abstract class Eatable : MonoBehaviour
     public float Mass { get; set; }
 
     public float initialMass;
+    private float radius;
 
     public string ParentName { get; set; }
 
-    private void Start()
+    protected virtual void Awake()
     {
         Mass = initialMass;
-        float radius = Radius();
+        radius = Radius();
         transform.localScale = new Vector3(radius, radius, 0);
+        //Debug.Log("INIT MASS : " + initialMass);
+    }
+
+    protected virtual void Start()
+    {
+        
     }
 
     private void FixedUpdate()
     {
-        float radius = Radius();
-        transform.localScale = new Vector3(radius, radius, 0);
+        //float radius = Radius();
+        //transform.localScale = new Vector3(radius, radius, 0);
     }
 
     protected virtual float Radius()
