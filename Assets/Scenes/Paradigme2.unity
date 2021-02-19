@@ -983,6 +983,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cellPrefab: {fileID: 5578616851439575387, guid: cc15902408025f742af2bfef25eae5ae,
     type: 3}
+  ejectedMassPrefab: {fileID: 4624580008765490747, guid: d4164a43b3fec8f43a6255b91bce6b7a,
+    type: 3}
   target: {fileID: 354820898}
   color: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &736546324
@@ -1030,6 +1032,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cellPrefab: {fileID: 5578616851439575387, guid: cc15902408025f742af2bfef25eae5ae,
     type: 3}
+  ejectedMassPrefab: {fileID: 0}
   target: {fileID: 1895169077}
   color: {r: 0.09019608, g: 0.41568628, b: 0.07450981, a: 1}
 --- !u!1 &768023476

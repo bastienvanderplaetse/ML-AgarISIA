@@ -8,8 +8,12 @@ public class CellManager : MonoBehaviour
 {
     public static int INTERVAL_RESPAWN = 1;
     public static int MAX_SPLIT = 16;
+    public static float MIN_WEIGHT_TO_SPLIT = 32f;
+
+    public static float MIN_WEIGHT_TO_EJECT = 35f;
 
     public GameObject cellPrefab;
+    public GameObject ejectedMassPrefab;
     public Transform target;
     public Color color;
 
@@ -53,6 +57,10 @@ public class CellManager : MonoBehaviour
         {
             Split();
         }
+        if (Input.GetKeyUp(KeyCode.W))
+        {
+            Eject();
+        }
     }
 
     private IEnumerator Spawn(int interval, bool infiniteTry)
@@ -95,7 +103,7 @@ public class CellManager : MonoBehaviour
             for (int i = 0; i < transform.childCount; i++)
             {
                 cell = transform.GetChild(i).GetComponent<Cell>();
-                if (cell.Mass >= 2 * initialMass)
+                if (cell.Mass >= MIN_WEIGHT_TO_SPLIT)
                 {
                     toSplit[pos] = cell;
                     pos++;
@@ -115,7 +123,7 @@ public class CellManager : MonoBehaviour
 
             for (int i = 0; i < maxToSplit; i++)
             {
-                if (allCells[i].Mass >= 2 * initialMass)
+                if (allCells[i].Mass >= MIN_WEIGHT_TO_SPLIT)
                 {
                     toSplit[pos] = allCells[i];
                     pos++;
@@ -162,5 +170,43 @@ public class CellManager : MonoBehaviour
 
         return totalMass > 2 * initialMass && transform.childCount < 16;
         
+    }
+
+    private void Eject()
+    {
+        (bool, Cell) ejectionData = EjectionData();
+        if (ejectionData.Item1)
+        {
+            ejectionData.Item2.AddMass(-18f);
+            GameObject ejectedMass = Instantiate(ejectedMassPrefab);
+            ejectedMass.GetComponent<EjectedMass>().Create(target.position, color, ejectionData.Item2.transform);
+        }
+    }
+
+    private (bool, Cell) EjectionData()
+    {
+        float closestDist = Mathf.Infinity;
+        Cell closestCell = null;
+        float currentDist;
+        Cell cell = null;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            cell = transform.GetChild(i).GetComponent<Cell>();
+            if (cell.Mass < MIN_WEIGHT_TO_EJECT)
+            {
+                return (false, null);
+            }
+            else
+            {
+                currentDist = Vector3.Distance(target.transform.position, transform.GetChild(i).transform.position);
+                if (currentDist < closestDist)
+                {
+                    closestDist = currentDist;
+                    closestCell = cell;
+                }
+            }
+        }
+
+        return (true, cell);
     }
 }
