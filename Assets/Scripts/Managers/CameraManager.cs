@@ -26,6 +26,10 @@ public class CameraManager : MonoBehaviour
         {
             ChangeCamera(2);
         }
+        else if (Input.GetKey(KeyCode.Alpha3))
+        {
+            ChangeCamera(3);
+        }
     }
 
     private void InitCameras()

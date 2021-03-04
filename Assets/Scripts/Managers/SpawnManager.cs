@@ -31,8 +31,8 @@ public class SpawnManager : MonoBehaviour
                 
                 if (result.Item2)
                 {
-                    Instantiate(prefabPellet, new Vector3(0,result.Item1.y,0), Quaternion.identity, pellets);
-                    //Instantiate(prefabPellet, result.Item1, Quaternion.identity, pellets);
+                    //Instantiate(prefabPellet, new Vector3(0,result.Item1.y,0), Quaternion.identity, pellets);
+                    Instantiate(prefabPellet, result.Item1, Quaternion.identity, pellets);
                 }
             }
         }

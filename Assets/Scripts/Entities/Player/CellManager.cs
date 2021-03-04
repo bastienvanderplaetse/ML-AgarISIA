@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Unity.MLAgents;
+using Unity.MLAgents.Sensors;
 
-public class CellManager : MonoBehaviour
+public class CellManager : Agent
 {
     public static int INTERVAL_RESPAWN = 1;
     public static int MAX_SPLIT = 16;
@@ -24,35 +26,51 @@ public class CellManager : MonoBehaviour
     private float initialMass;
     public float InitialRadius { get; private set; }
 
-    private void Awake()
-    {
-        //GameObject cell = Instantiate(cellPrefab, transform);
-        //cell.GetComponent<SpriteRenderer>().color = color;
-        //initCell = cell.GetComponent<Cell>();
-        //initCell.target = target;
-        //StartCoroutine(Spawn(0, true));
-    }
+    private float previousMass;
 
-    private void Start()
+    //private void Start()
+    //{
+    //    spawning = false;
+    //    initialMass = -1f;
+    //}
+
+    public override void Initialize()
     {
         spawning = false;
         initialMass = -1f;
-        //transform.GetChild(0).GetComponent<SpriteRenderer>().color = color;
-        //transform.GetChild(0).GetC
+        previousMass = 0f;
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void OnEpisodeBegin()
     {
-        if (transform.childCount == 0 && !spawning)
-        {
-            //Debug.Log("Need to respawn !!!!");
-            //GameObject cell = Instantiate(cellPrefab, transform);
-            //Debug.Log("SCALE INIT : " + cell.transform.localScale.x);
-            spawning = true;
-            StartCoroutine(Spawn(INTERVAL_RESPAWN, false));
-        }
+        //spawning = true;
+        //StartCoroutine(Spawn(INTERVAL_RESPAWN, false));
+    }
 
+    public override void OnActionReceived(float[] vectorAction)
+    {
+        // Action 0 : définit la position en X de la target [-7000,7000]
+        // Action 1 : définit la position en Y de la target [-7000,7000]
+        target.position = new Vector3(vectorAction[0], vectorAction[1], 0);
+        // Action 2 : [0,1] => Split 
+        if (vectorAction[2] > 0.5f)
+        {
+            Split();
+        }
+        // Action : [0,1] => Eject
+        if (vectorAction[3] > 0.5f)
+        {
+            Eject();
+        }
+    }
+
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        
+    }
+
+    public override void Heuristic(float[] actionsOut)
+    {
         if (Input.GetKeyUp(KeyCode.Space))
         {
             Split();
@@ -62,6 +80,50 @@ public class CellManager : MonoBehaviour
             Eject();
         }
     }
+
+    void Update()
+    {
+        if (transform.childCount == 0 && !spawning)
+        {
+            spawning = true;
+            StartCoroutine(Spawn(INTERVAL_RESPAWN, false));
+        }
+
+        UpdateMass();
+    }
+
+    private void UpdateMass()
+    {
+        float newMass = 0.0f;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            newMass += transform.GetChild(i).GetComponent<Cell>().Mass;
+        }
+
+        if (newMass != previousMass)
+        {
+            AddReward(newMass - previousMass);
+        }
+    }
+
+    // Update is called once per frame
+    //void Update()
+    //{
+    //    if (transform.childCount == 0 && !spawning)
+    //    {
+    //        spawning = true;
+    //        StartCoroutine(Spawn(INTERVAL_RESPAWN, false));
+    //    }
+
+    //    if (Input.GetKeyUp(KeyCode.Space))
+    //    {
+    //        Split();
+    //    }
+    //    if (Input.GetKeyUp(KeyCode.W))
+    //    {
+    //        Eject();
+    //    }
+    //}
 
     private IEnumerator Spawn(int interval, bool infiniteTry)
     {
@@ -84,8 +146,8 @@ public class CellManager : MonoBehaviour
         {
             result = SpawnManager.ValidSpawnPosition(cell.transform.localScale.x / 2, 10);
         }
-        //cell.transform.position = result.Item1;
-        cell.transform.position = new Vector3(0, result.Item1.y, 0);
+        cell.transform.position = result.Item1;
+        //cell.transform.position = new Vector3(0, result.Item1.y, 0);
         spawning = false;
     }
 

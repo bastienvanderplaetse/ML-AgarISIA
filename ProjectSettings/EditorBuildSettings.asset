@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Paradigme2.unity
+    guid: c74bace22ed92f8408a03008c27cc45f
   m_configObjects: {}
